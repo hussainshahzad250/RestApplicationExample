@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="leased_driver_tracking" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6f70a107-4466-45b3-85cb-64911e201278">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="dsTrip" uuid="65539a27-e78d-43f2-99ef-5185b50783c7">
+		<parameter name="clientsubid" class="java.lang.String"/>
+		<parameter name="tripdate" class="java.lang.String"/>
+		<parameter name="driverid" class="java.lang.String">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT drivermobile, vehicleid, journeystartdate, journeyenddate FROM trux.booking_lease
+where companyId = $P{clientsubid} and date(journeystartdate) = $P{tripdate} and drivermobile = $P{driverid}]]>
+		</queryString>
+		<field name="drivermobile" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="vehicleid" class="java.lang.Integer">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="journeystartdate" class="java.sql.Timestamp">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="journeyenddate" class="java.sql.Timestamp">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="dataset1" uuid="49c5f5ce-2c32-4e92-ab33-33a85b5945ed"/>
+	<subDataset name="dataset2" uuid="859b855a-35ef-4e89-aedc-39a536f7ef15"/>
+	<parameter name="datefilter" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 	DR.`phone_number` driver_loginhistory_driver_id,
+		DR.`first_name`,
+        DATE_FORMAT(SUBSTRING_INDEX(GROUP_CONCAT(DRATT.`datetime`),',',1 ), "%h:%i %p") AS login_time,
+        IF(INSTR(GROUP_CONCAT(DRATT.`datetime`), ',')=0 , 0, DATE_FORMAT(SUBSTRING_INDEX(GROUP_CONCAT(DRATT.`datetime`),',',-1 ), "%h:%i %p")) AS logout_time,
+        date(datetime) As presentdateonly,
+        csm.subName subsidiary_name,
+        ddvm.vehicle_number vechicle_number,
+        csm.idClientSubMaster clientsubmasterid
+
+FROM `driver_loginhistory` DRATT
+LEFT JOIN `driver_registration` DR ON DRATT.`driver_id`=DR.`phone_number`
+LEFT JOIN client_sub_master csm on csm.idClientSubMaster = DR.sub_org_client
+LEFT JOIN driver_device_vehicle_mapping ddvm on ddvm.driver_phone_no = DRATT.driver_id
+where date(datetime) = '2015-12-17'
+GROUP BY DRATT.driver_id ORDER BY FIELD( DRATT.`punch_status`, '0', '1' )  LIMIT 0 , 30
+]]>
+	</queryString>
+	<field name="driver_loginhistory_driver_id" class="java.lang.String"/>
+	<field name="subsidiary_name" class="java.lang.String"/>
+	<field name="vehicle_number" class="java.lang.String"/>
+	<field name="first_name" class="java.lang.String"/>
+	<field name="clientsubmasterid" class="java.lang.String"/>
+	<field name="presentdateonly" class="java.lang.String"/>
+	<field name="login_time" class="java.lang.String"/>
+	<field name="logout_time" class="java.lang.String"/>
+	<group name="subsidiary_group">
+		<groupExpression><![CDATA[$F{subsidiary_name}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="3" width="555" height="15" forecolor="#006699" backcolor="#E6E6E6" uuid="14f5daf7-88d0-4771-a891-615a7f76e66d"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{subsidiary_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="79" backcolor="#006699" uuid="3ce11e0d-1773-47e0-ae0e-81bce932b8f1"/>
+				<staticText>
+					<reportElement x="20" y="20" width="495" height="43" forecolor="#FFFFFF" uuid="67dbbffe-3fd7-4c64-a372-d96ecd7d4109"/>
+					<textElement>
+						<font size="24" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Driver App Login Report  (Leased)]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="10" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="111" y="0" width="103" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="cfed13b6-afb4-44cb-983b-3d61bf786f9a"/>
+				<textElement>
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Driver Mobile]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="335" y="0" width="112" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="f08e3c61-7840-4bcf-8d4b-57811a89cb3f"/>
+				<textElement>
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Punch In]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="110" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="0763eec4-dda5-45ee-816b-295de68cdb96"/>
+				<textElement>
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vehicle Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="214" y="0" width="121" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="00bc70ed-60c1-4036-a5bd-54dd0a484cb9"/>
+				<textElement>
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Driver Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="447" y="0" width="108" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c0a95ae7-b467-4f8f-8437-d0b1e747f84c"/>
+				<textElement>
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Punch Out]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="56" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="110" y="3" width="104" height="14" uuid="ed0faf5a-3d2c-40c2-a04d-541e57725ad0"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{driver_loginhistory_driver_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="3" width="112" height="14" uuid="060bf665-3d74-4c9c-a411-b689a461ae0f"/>
+				<textFieldExpression><![CDATA[$F{login_time}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="3" width="111" height="14" uuid="14f18a4c-34e7-466a-bdbb-281e4b068d91"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vehicle_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="214" y="3" width="121" height="14" uuid="9ca525ad-a5bf-498d-97fb-8e6d7715d68c"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{first_name}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table" style="table" x="39" y="29" width="360" height="20" uuid="a399af06-ec5a-47f7-935e-0d9c6fc4b210"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="dsTrip" uuid="b7bf69fa-4d64-4ba0-ab2e-0a55ee20c760">
+						<datasetParameter name="clientsubid">
+							<datasetParameterExpression><![CDATA[$F{clientsubmasterid}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="tripdate">
+							<datasetParameterExpression><![CDATA[$F{presentdateonly}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="driverid">
+							<datasetParameterExpression><![CDATA[$F{driver_loginhistory_driver_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="67ba2b70-b97a-40f3-97e3-fc86c06f478d">
+						<jr:detailCell style="table_TD" height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="33d7d579-e40f-4962-bbf7-ce1d370882a7"/>
+								<textFieldExpression><![CDATA[$F{drivermobile}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="8b389cc0-9c1a-4f41-a53b-b722ba142b45">
+						<jr:detailCell style="table_TD" height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="ed51475c-1083-436e-a01a-22864eae7aff"/>
+								<textFieldExpression><![CDATA[$F{vehicleid}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="27057b79-4554-4de2-8708-9d7de769cc40">
+						<jr:detailCell style="table_TD" height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="36ec21ae-1ec9-4740-b78e-8af1709ac671"/>
+								<textFieldExpression><![CDATA[$F{journeystartdate}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="39564011-57e5-4665-94e8-85dd6caba9b8">
+						<jr:detailCell style="table_TD" height="20">
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" uuid="f0dca38d-4d65-4fda-b6d2-77eae10dafd1"/>
+								<textFieldExpression><![CDATA[$F{journeyenddate}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement x="447" y="0" width="108" height="14" uuid="72cb99d7-1219-452b-b30e-9b0e647cdadb"/>
+				<textFieldExpression><![CDATA[$F{logout_time}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="0" y="2" width="555" height="13" backcolor="#E6E6E6" uuid="c8fc8e7c-5fb7-4a00-8851-c924a7dca74f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Total Count: "+$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="10" y="2" width="100" height="13" uuid="d013d7fc-ed99-4b26-ac1e-9a69cb17abc3"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="7" splitType="Stretch"/>
+	</summary>
+</jasperReport>
