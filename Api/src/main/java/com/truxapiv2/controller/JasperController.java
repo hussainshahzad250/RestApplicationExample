@@ -60,7 +60,8 @@ public class JasperController {
 			hmParams.put("Title", "Employees working more than 1 Years");
 			JasperReport jasperReport = getCompiledFile(reportFileName, request);
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, hmParams, conn);
-			generateReportHtml(jasperPrint, request, response); // For HTML report
+			generateReportHtml(jasperPrint, request, response); // For HTML
+																// report
 			// generateReportPDF(response, hmParams, jasperReport, conn);
 		} catch (Exception sqlExp) {
 			System.out.println("Exception::" + sqlExp.toString());
@@ -76,9 +77,12 @@ public class JasperController {
 		}
 		return null;
 	}
+
 	private JasperReport getCompiledFile(String fileName, HttpServletRequest request) throws JRException {
-		System.out.println("path " + request.getSession().getServletContext().getRealPath("/jasper/" + fileName + ".jasper"));
-		File reportFile = new File(request.getSession().getServletContext().getRealPath("/jasper/" + fileName + ".jasper"));
+		System.out.println(
+				"path " + request.getSession().getServletContext().getRealPath("/jasper/" + fileName + ".jasper"));
+		File reportFile = new File(
+				request.getSession().getServletContext().getRealPath("/jasper/" + fileName + ".jasper"));
 		// If compiled file is not found, then compile XML template
 		if (!reportFile.exists()) {
 			JasperCompileManager.compileReportToFile(

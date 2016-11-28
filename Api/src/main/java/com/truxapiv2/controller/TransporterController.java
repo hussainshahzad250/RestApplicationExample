@@ -1315,9 +1315,7 @@ public class TransporterController {
 				restResponce.setErrorMesaage("Transporter already registered");
 				return restResponce;
 			} else {
-
 				saveBack = transporterBankDetailsService.saveTransporterBankDetails(tr);
-
 				if (saveBack.getErrorCode().equals("100")) {
 					restResponce.setErrorCode(saveBack.getErrorCode());
 					restResponce.setErrorMesaage(saveBack.getErrorMessage());
@@ -1331,7 +1329,6 @@ public class TransporterController {
 					restResponce.setErrorMesaage(saveBack.getErrorMessage());
 					restResponce.setData(saveBack.getData());
 				}
-
 				return restResponce;
 			}
 		} catch (Exception e) {
@@ -1340,7 +1337,5 @@ public class TransporterController {
 			restResponcee.setErrorMesaage(e.toString());
 			return restResponcee;
 		}
-
 	}
-
 }
